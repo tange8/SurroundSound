@@ -6,6 +6,8 @@ import ForumPage from './pages/ForumPage'
 import ProfilePage from './pages/ProfilePage'
 import TopNav from './components/TopBar'
 import EventPage from './pages/EventPage'
+import ArtistPage from "./pages/ArtistPage.jsx";
+import VenuePage from "./pages/VenuePage.jsx";
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
                 <Route path="/explore" element={<SearchPage />} />
                 <Route path="/forum"   element={<ForumPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/event/:eventId" element={<EventPage />} /> 
+                <Route path="/event/:eventId" element={<EventPage />} />
+                <Route path="/artist/:artistId" element={<ArtistPage />} />
+                <Route path="/venue/:venueId" element={<VenuePage />} />
               </Routes>
             </main>
         </div>
