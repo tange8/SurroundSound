@@ -2,6 +2,8 @@ import DashCard from '../components/DashCard'
 import HighlightedEvent from '../components/HighlightedEvent'
 import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import VenueCard from '../components/VenueCard'
+
 
 const featuredEvent = {
   image: '/src/assets/TaylorSwift.png',
@@ -18,6 +20,12 @@ const placeholderCard = {
   liked: false,
 }
 
+const placeholderVenue = {
+  image: '/src/assets/Observatory.png',
+  name: 'The Observatory',
+  location: 'Santa Ana, CA'
+}
+
 function HomePage() {
     useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -27,38 +35,38 @@ function HomePage() {
 
   return (
     //background gradient
-    <div className="min-h-screen" style={{
-      background: 'radial-gradient(ellipse at top right, rgba(180,20,20,0.5) 0%, transparent 60%), #0b0b18'
-    }}>
+    <div className="min-h-screen">
 
       {/* Featured Event */}
       <HighlightedEvent {...featuredEvent} />
 
       {/* Trending Now */}
       <section className="px-8 py-6">
-        <h2 className="text-white font-semibold text-lg mb-4 italic">Trending Now</h2>
+        <h2 className="text-white font-display text-lg mb-4 italic">Trending Now</h2>
         <div className="flex gap-4 overflow-x-auto pb-2">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(10)].map((_, i) => (
             <DashCard key={i} {...placeholderCard} />
           ))}
         </div>
       </section>
 
       {/* Venues Near You */}
-      <section className="px-8 py-6">
-        <h2 className="text-white font-semibold text-lg mb-4 italic">Venues Near You</h2>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {[...Array(6)].map((_, i) => (
-            <DashCard key={i} {...placeholderCard} />
+      <section className="px-4 md:px-8 py-6">
+        <h2 className="text-white font-display text-lg mb-4 italic">
+          Venues Near You
+        </h2>
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          {[...Array(10)].map((_, i) => (
+            <VenueCard key={i} {...placeholderVenue} />
           ))}
         </div>
       </section>
 
       {/* Your Favorite Artists */}
       <section className="px-8 py-6">
-        <h2 className="text-white font-semibold text-lg mb-4 italic">Your Favorite Artists</h2>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {[...Array(6)].map((_, i) => (
+        <h2 className="text-white font-display text-lg mb-4 italic">Your Favorite Artists</h2>
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          {[...Array(10)].map((_, i) => (
             <DashCard key={i} {...placeholderCard} />
           ))}
         </div>

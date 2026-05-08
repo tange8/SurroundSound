@@ -16,14 +16,14 @@ function NavBar() {
   const location = useLocation()
 
   return (
-    <nav className="fixed top-0 left-0 h-screen w-52 bg-[#0d0d1a] flex flex-col gap-2 px-4 py-6 pt-20">
+    <nav className="fixed top-0 left-0 h-screen w-52 flex flex-col gap-2 px-4 py-6 pt-20">
       
 
       {navItems.map(item => (
         <Link
           key={item.path}
           to={item.path}
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors
+          className={`flex items-center gap-3 px-4 py-3 font-display rounded-lg text-sm transition-colors
             ${location.pathname === item.path
               ? 'text-white font-semibold'
               : 'text-gray-400 hover:text-white hover:bg-white/10'
