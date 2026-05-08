@@ -9,7 +9,7 @@ import EventPage from './pages/EventPage'
 
 function App() {
   return (
-    <div className="flex bg-[#0d0d1a] min-h-screen text-white">
+    <div className="flex bg-darker-blue min-h-screen text-white">
       <NavBar />
         <div className="ml-52 flex-1 flex flex-col">
           <TopNav />
