@@ -4,13 +4,13 @@ function HighlightedEvent({ image, artist, eventId }) {
   const navigate = useNavigate()
 
   return (
-    <div className="relative mx-8 mt-6 rounded-2xl overflow-hidden h-64 cursor-pointer">
+    <div className="relative md:mx-8 mt-6 rounded-xl overflow-hidden h-96 cursor-pointer">
 
       {/* Background Image */}
       <img
         src={image}
         alt={artist}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover object-[center_20%]"
       />
 
       {/* Dark gradient overlay so text is readable */}
@@ -18,13 +18,13 @@ function HighlightedEvent({ image, artist, eventId }) {
 
       {/* Text + Button */}
       <div className="absolute bottom-8 left-8 flex flex-col gap-3">
-        <h2 className="text-white text-3xl font-bold drop-shadow-lg">
-          <span className="text-white">{artist}</span> On Tour Now!
+        <h2 className="text-white text-3xl font-display drop-shadow-lg">
+          <span className="text-white font-display">{artist}</span> On Tour Now!
         </h2>
 
         <button
           onClick={() => navigate(`/event/${eventId}`)}
-          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-full w-fit transition-colors"
+          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm font-display px-5 py-2 rounded-full w-fit transition-colors"
         >
           Check it out →
         </button>

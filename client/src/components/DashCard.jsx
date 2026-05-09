@@ -1,38 +1,56 @@
 import { useState } from 'react'
+import RedHeart from '../assets/icons/RedHeart.svg?react'
+import WhiteHeart from '../assets/icons/WhiteHeart.svg?react'
+import Clock from '../assets/icons/Clock.svg?react'
+import Calendar from '../assets/icons/Calendar.svg?react'
 
 function DashCard({ image, date, time, artist, venue }) {
   const [liked, setLiked] = useState(false)
 
   return (
-    <div className="relative mx-8 mt-6 rounded-2xl overflow-hidden h-52 max-w-4xl flex-shrink-0 cursor-pointer group">
-
-      {/* Image */}
-      <img
-        src={image}
-        alt={artist}
-        className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
+    <div
+      className="relative shrink-0 w-44 rounded-2xl overflow-hidden cursor-pointer group flex flex-col"
+      style={{
+        border: '1.5px solid transparent',
+        backgroundImage: 'linear-gradient(#00002C, #00002C), linear-gradient(to bottom, #000013, #FF3831)',
+        backgroundOrigin: 'border-box',
+        backgroundClip: 'padding-box, border-box'
+      }}
+    >
+      {/* Blue corner glow */}
+      <div
+        className="absolute bottom-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-200 z-10"
+        style={{ background: 'radial-gradient(ellipse at bottom right, #4133FF, transparent)' }}
       />
+      {/* ── TOP: Image section ── */}
+      <div className="relative h-48 overflow-hidden">
+        <img
+          src={image}
+          alt={artist}
+          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+        />
 
-      {/* Heart */}
-      <button
-        onClick={() => setLiked(!liked)}
-        className="absolute top-2 right-2 text-lg"
-      >
-        {liked ? '❤️' : '🤍'}
-      </button>
+        {/* Heart */}
+        <button
+          onClick={(e) => { e.stopPropagation(); setLiked(!liked) }}
+          className="absolute top-3 right-3 text-lg z-10"
+        >
+           {liked ? <RedHeart className="w-5 h-5" /> : <WhiteHeart className="w-5 h-5" />}
+        </button>
+      </div>
 
-      {/* Bottom overlay */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 py-3">
-        <div className="flex items-center gap-1 text-gray-300 text-xs mb-1">
-          <span>📅</span>
-          <span>{date}</span>
+      {/* ── BOTTOM: Info section ── */}
+      <div className="flex flex-col gap-1 px-3 py-3">
+        <div className="flex items-center gap-1 text-lavendar text-xs">
+          <Calendar className="w-3 h-3" />
+          <span className="font-display">{date}</span>
         </div>
-        <div className="flex items-center gap-1 text-gray-300 text-xs mb-2">
-          <span>🕐</span>
-          <span>{time}</span>
+        <div className="flex items-center gap-1 text-lavendar text-xs mb-1">
+          <Clock className="w-3 h-3" />
+          <span className="font-display">{time}</span>
         </div>
-        <p className="text-white font-bold text-sm">{artist}</p>
-        <p className="text-gray-400 text-xs">{venue}</p>
+        <p className="text-white font-display text-sm">{artist}</p>
+        <p className="text-lavendar/70 font-body text-xs">{venue}</p>
       </div>
 
     </div>
