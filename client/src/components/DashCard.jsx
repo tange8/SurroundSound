@@ -4,11 +4,12 @@ import WhiteHeart from '../assets/icons/WhiteHeart.svg?react'
 import Clock from '../assets/icons/Clock.svg?react'
 import Calendar from '../assets/icons/Calendar.svg?react'
 
-function DashCard({ image, date, time, artist, venue }) {
+function DashCard({ image, date, time, artist, venue, onClick }) {
   const [liked, setLiked] = useState(false)
 
   return (
     <div
+      onClick={onClick}
       className="relative shrink-0 w-44 rounded-2xl overflow-hidden cursor-pointer group flex flex-col"
       style={{
         border: '1.5px solid transparent',

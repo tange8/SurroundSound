@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import TaylorSwift from "../assets/TaylorSwift.png";
+import TaylorSwift from "../assets/placeholders/TaylorSwift.png";
 
 export default function VenuePageDetails({
                                              description = "SoFi Stadium is a state-of-the-art sports and entertainment destination in Inglewood, California. Home to the LA Rams and LA Chargers, the venue also hosts some of the world's biggest concerts and live events throughout the year.",
