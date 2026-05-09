@@ -9,6 +9,8 @@ import EventPage from './pages/EventPage'
 import CreatePage from './pages/CreatePage'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
+import ArtistPage from "./pages/ArtistPage.jsx";
+import VenuePage from "./pages/VenuePage.jsx";
 
 function App() {
   //we use uselocation() to hide navbars on the login and signup pages
@@ -38,6 +40,8 @@ function App() {
             <Route path="/create" element={<CreatePage />} />
             <Route path="/login"  element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+             <Route path="/artist/:artistId" element={<ArtistPage />} />
+             <Route path="/venue/:venueId" element={<VenuePage />} />
           </Routes>
         </main>
       </div>
