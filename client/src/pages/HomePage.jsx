@@ -6,13 +6,13 @@ import VenueCard from '../components/VenueCard'
 
 
 const featuredEvent = {
-  image: '/src/assets/TaylorSwift.png',
+  image: '/src/assets/placeholders/TaylorSwift.png',
   artist: 'Taylor Swift',
   eventId: '1',                // will be the real event id from the db later
 }
 
 const placeholderCard = {
-  image: '/src/assets/TaylorSwift.png', 
+  image: '/src/assets/placeholders/TaylorSwift.png', 
   date: 'Sunday, June 14, 2026',
   time: '7:00 PM',
   artist: 'Taylor Swift',
@@ -21,7 +21,7 @@ const placeholderCard = {
 }
 
 const placeholderVenue = {
-  image: '/src/assets/Observatory.png',
+  image: '/src/assets/placeholders/Observatory.png',
   name: 'The Observatory',
   location: 'Santa Ana, CA'
 }

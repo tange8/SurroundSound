@@ -52,7 +52,7 @@ function TopBar() {
           </button>
         ) : ( */}
 
-        <button className="flex items-center gap-2 font-display font-semibold text-sm text-white bg-red-orange hover:bg-red-600 px-4 py-2 rounded-full transition-colors">
+        <button onClick={() => navigate('/login')} className="flex items-center gap-2 font-display font-semibold text-sm text-white bg-red-orange hover:bg-red-600 px-4 py-2 rounded-full transition-colors">
           <ProfileIcon className="w-4 h-4 shrink-0" /> 
           <span className="hidden lg:inline">Sign Up / Log In</span>
           <span className="lg:hidden">Log In</span>

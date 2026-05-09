@@ -1,5 +1,5 @@
 import ForumPost from '../components/ForumPost'
-import avatar1 from '../assets/SophiaAvatar.png'
+import avatar1 from '../assets/placeholders/SophiaAvatar.png'
 
 const placeholderPosts = [
   {
@@ -10,7 +10,7 @@ const placeholderPosts = [
     event: 'Taylor Swift at SoFi Stadium',
     title: 'Eras Tour Outfit Inspo',
     body: 'check out this jacket I made for the Eras Tour!',
-    image: '/src/assets/jacket.png',
+    image: '/src/assets/placeholders/jacket.png',
   },
   {
     id: 2,
