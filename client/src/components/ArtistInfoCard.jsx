@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TaylorSwift from "../assets/TaylorSwift.png";
+import TaylorSwift from "../assets/placeholders/TaylorSwift.png";
 
 export default function ArtistInfoCard({
                                            artistName = "Taylor Swift",

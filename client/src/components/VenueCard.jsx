@@ -1,6 +1,6 @@
-function VenueCard({ image, name, location }) {
+function VenueCard({ image, name, location, onClick }) {
   return (
-    <div className="relative shrink-0 w-52 cursor-pointer group flex flex-col items-center gap-3">
+    <div onClick={onClick} className="relative shrink-0 w-52 cursor-pointer group flex flex-col items-center gap-3">
 
       {/* Image with blue gradient border */}
       <div
