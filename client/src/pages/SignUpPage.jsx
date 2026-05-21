@@ -1,23 +1,34 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/icons/Logo.svg?react'
+import { useAuth } from '../context/AuthContext'
 
 function SignUpPage() {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { signUp } = useAuth()
   const navigate = useNavigate()
 
-  const handleSignUp = () => {
-    // wire to supabase later
-    console.log({ email, username, password })
+  const handleSignUp = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      await signUp({ email, password, username, displayName: username })
+      navigate('/')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="flex flex-col items-center gap-5 w-full max-w-sm">
 
-        {/* Logo */}
         <Logo className="h-16 w-auto" />
 
         <h2 className="text-white font-display font-bold text-2xl">Sign Up</h2>
@@ -55,6 +66,11 @@ function SignUpPage() {
           />
         </div>
 
+        {/* Error message */}
+        {error && (
+          <p className="text-red-400 font-body text-xs text-center">{error}</p>
+        )}
+
         {/* Login link */}
         <p className="text-lavendar/60 font-body text-xs">
           Already have an account?{' '}
@@ -69,9 +85,10 @@ function SignUpPage() {
         {/* Sign up button */}
         <button
           onClick={handleSignUp}
-          className="w-full bg-red-orange hover:bg-purple transition-colors text-white font-display font-bold text-base rounded-full py-3 mt-2"
+          disabled={loading}
+          className="w-full bg-red-orange hover:bg-purple transition-colors text-white font-display font-bold text-base rounded-full py-3 mt-2 disabled:opacity-50"
         >
-          Sign Up
+          {loading ? 'Creating account…' : 'Sign Up'}
         </button>
 
       </div>
