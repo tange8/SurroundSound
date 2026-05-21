@@ -3,6 +3,7 @@ import HomeIcon from '../assets/icons/Home.svg?react'
 import ExploreIcon from '../assets/icons/Globe.svg?react'
 import ForumIcon from '../assets/icons/Chat_Circle.svg?react'
 import PostIcon from '../assets/icons/Chat_Circle_Add.svg?react'
+import { useAuth } from '../context/AuthContext'
 
 
 const navItems = [
@@ -14,12 +15,15 @@ const navItems = [
 
 function NavBar() {
   const location = useLocation()
+  const { isAuthenticated } = useAuth() 
 
   return (
     <nav className="fixed top-0 left-0 h-screen w-52 flex flex-col gap-2 px-4 py-6 pt-20">
       
 
-      {navItems.map(item => (
+      {navItems
+      .filter(item => !item.protected || isAuthenticated)  
+      .map(item => (
         <Link
           key={item.path}
           to={item.path}

@@ -1,15 +1,30 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Logo from '../assets/icons/Logo.svg?react'
+import { useAuth } from '../context/AuthContext'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { signIn } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const handleLogin = () => {
-    // wire to supabase later
-    console.log({ email, password })
+  const from = location.state?.from?.pathname || '/'
+
+  const handleLogin = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      await signIn({ email, password })
+      navigate(from, { replace: true })
+    } catch {
+      setError('Invalid email or password.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -46,6 +61,11 @@ function LoginPage() {
           </button>
         </div>
 
+        {/* Error message */}
+        {error && (
+          <p className="text-red-400 font-body text-xs text-center">{error}</p>
+        )}
+
         {/* Sign up link */}
         <p className="text-lavendar/60 font-body text-xs">
           Don't have an account?{' '}
@@ -60,9 +80,10 @@ function LoginPage() {
         {/* Login button */}
         <button
           onClick={handleLogin}
-          className="w-full bg-red-orange hover:bg-purple transition-colors text-white font-display font-bold text-base rounded-full py-3 mt-2"
+          disabled={loading}
+          className="w-full bg-red-orange hover:bg-purple transition-colors text-white font-display font-bold text-base rounded-full py-3 mt-2 disabled:opacity-50"
         >
-          Log In
+          {loading ? 'Logging in…' : 'Log In'}
         </button>
 
       </div>
