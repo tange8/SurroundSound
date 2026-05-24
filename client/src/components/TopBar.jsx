@@ -4,6 +4,7 @@ import Logo from '../assets/icons/Logo.svg?react'
 import LocationIcon from '../assets/icons/LocationIcon.svg?react'
 import ProfileIcon from '../assets/icons/ProfileIcon.svg?react'
 import { useAuth } from '../context/AuthContext'
+import LocationPicker from './LocationPicker'
 
 function TopBar() {
   const [search, setSearch] = useState('')
@@ -22,7 +23,7 @@ function TopBar() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-16 bg-darker-blue border-b border-white/10 flex items-center px-6 gap-4 z-10">
+    <div className="fixed top-0 left-0 right-0 h-16 bg-darker-blue border-b border-white/10 flex items-center px-6 gap-4 z-50">
       
       <div className="shrink-0">
         <Logo className="h-8 w-auto" />
@@ -42,10 +43,7 @@ function TopBar() {
       </div>
 
       <div className="flex items-center gap-3 shrink-0">
-        <button className="flex items-center gap-2 font-display font-semibold text-sm text-white bg-red-orange hover:bg-white/20 px-3 py-2 rounded-full transition-colors">
-          <LocationIcon className="w-4 h-4 shrink-0" />
-          Location
-        </button>
+        <LocationPicker />
 
         {isAuthenticated ? (
           <div className="flex items-center gap-2">

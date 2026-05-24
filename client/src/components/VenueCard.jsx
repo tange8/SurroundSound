@@ -1,8 +1,6 @@
 function VenueCard({ image, name, location, onClick }) {
   return (
     <div onClick={onClick} className="relative shrink-0 w-52 cursor-pointer group flex flex-col items-center gap-3">
-
-      {/* Image with blue gradient border */}
       <div
         className="w-full rounded-2xl overflow-hidden"
         style={{
@@ -18,13 +16,10 @@ function VenueCard({ image, name, location, onClick }) {
           className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-
-      {/* Info below image */}
       <div className="text-center">
         <p className="text-white font-display text-sm">{name}</p>
         <p className="text-white font-body text-xs mt-1">{location}</p>
       </div>
-
     </div>
   )
 }
