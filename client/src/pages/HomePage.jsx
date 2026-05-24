@@ -1,91 +1,141 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { useEvents } from '../hooks/useEvents'
 import DashCard from '../components/DashCard'
 import HighlightedEvent from '../components/HighlightedEvent'
-import { useEffect } from 'react'
-import { supabase } from '../lib/supabase'
 import VenueCard from '../components/VenueCard'
-import { useNavigate } from 'react-router-dom' 
+import { useLocation as useUserLocation } from '../context/LocationContext'
 
-
-
-const featuredEvent = {
-  image: '/src/assets/placeholders/TaylorSwift.png',
-  artist: 'Taylor Swift',
-  eventId: '1',                // will be the real event id from the db later
+// Format "2026-06-14" → "Sunday, June 14, 2026"
+function formatDate(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-const placeholderCard = {
-  image: '/src/assets/placeholders/TaylorSwift.png', 
-  date: 'Sunday, June 14, 2026',
-  time: '7:00 PM',
-  artist: 'Taylor Swift',
-  venue: 'at SoFi Stadium',
-  liked: false,
-  eventId: '1',  
-  artistId: '1',
+// Format "19:00:00" → "7:00 PM"
+function formatTime(timeStr) {
+  if (!timeStr) return ''
+  const [h, m] = timeStr.split(':')
+  const date = new Date()
+  date.setHours(+h, +m)
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 }
 
-const placeholderVenue = {
-  image: '/src/assets/placeholders/Observatory.png',
-  name: 'The Observatory',
-  location: 'Santa Ana, CA',
-  venueId: '1',
+// Get unique venues from events list
+function getUniqueVenues(events) {
+  const seen = new Set()
+  return events
+    .filter(({ tm_venue }) => {
+      if (!tm_venue || seen.has(tm_venue.ticketmaster_id)) return false
+      seen.add(tm_venue.ticketmaster_id)
+      return true
+    })
+    .slice(0, 10)
 }
 
 function HomePage() {
-   const navigate = useNavigate()
-   
-    useEffect(() => {
+  const navigate = useNavigate()
+  const { location } = useUserLocation()
+  const { events, loading, error } = useEvents({
+      city: location.city,    
+      stateCode: location.stateCode,  
+      size: 20,
+    })
+
+
+
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       console.log('Supabase connected:', data)
     })
   }, [])
 
+  const featuredEvent = events[0] || null
+  const uniqueVenues = getUniqueVenues(events)
+
   return (
-    //background gradient
     <div className="min-h-screen">
 
-      {/* Featured Event */}
-      <HighlightedEvent {...featuredEvent} />
+      {/* Featured / Highlighted Event */}
+      {featuredEvent ? (
+        <HighlightedEvent
+          image={featuredEvent.tm_event.image_url}
+          artist={featuredEvent.tm_artist?.name || featuredEvent.tm_event.title}
+          eventId={featuredEvent.tm_event.ticketmaster_id}
+        />
+      ) : (
+        <div className="h-64 bg-white/5 animate-pulse rounded-xl mx-8 mt-4" />
+      )}
 
       {/* Trending Now */}
       <section className="px-8 py-6">
         <h2 className="text-white font-display text-lg mb-4 italic">Trending Now</h2>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {[...Array(10)].map((_, i) => (
-             <DashCard
-              key={i}
-              {...placeholderCard}
-              onClick={() => navigate(`/event/${placeholderCard.eventId}`)}
-            />
-          ))}
-        </div>
+
+        {loading && (
+          <div className="flex gap-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="w-36 h-52 bg-white/5 animate-pulse rounded-xl shrink-0" />
+            ))}
+          </div>
+        )}
+
+        {error && <p className="text-red-400 font-body text-sm">{error}</p>}
+
+        {!loading && !error && (
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {events.map(({ tm_event, tm_artist, tm_venue }) => (
+              <DashCard
+                key={tm_event.ticketmaster_id}
+                image={tm_event.image_url}
+                date={formatDate(tm_event.event_date)}
+                time={formatTime(tm_event.event_time)}
+                artist={tm_artist?.name || tm_event.title}
+                venue={tm_venue ? `at ${tm_venue.name}` : ''}
+                liked={false}
+                eventId={tm_event.ticketmaster_id}
+                artistId={tm_artist?.ticketmaster_id}
+                onClick={() => navigate(`/event/${tm_event.ticketmaster_id}`)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Venues Near You */}
       <section className="px-4 md:px-8 py-6">
-        <h2 className="text-white font-display text-lg mb-4 italic">
-          Venues Near You
-        </h2>
+        <h2 className="text-white font-display text-lg mb-4 italic">Venues Near You</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-          {[...Array(10)].map((_, i) => (
+          {uniqueVenues.map(({ tm_event, tm_venue }) => (
             <VenueCard
-              key={i}
-              {...placeholderVenue}
-              onClick={() => navigate(`/venue/${placeholderVenue.venueId}`)}
-            />
+            key={tm_venue.ticketmaster_id}
+            image={tm_event.image_url}
+            name={tm_venue.name}
+            location={`${tm_venue.city}, ${tm_venue.state}`}
+            city={tm_venue.city}    // ← added
+            state={tm_venue.state}  // ← added
+            venueId={tm_venue.ticketmaster_id}
+            onClick={() => navigate(`/venue/${tm_venue.ticketmaster_id}`)}
+          />
           ))}
         </div>
       </section>
 
-      {/* Your Favorite Artists */}
+      {/* Your Favorite Artists — placeholder until auth favorites are built */}
       <section className="px-8 py-6">
         <h2 className="text-white font-display text-lg mb-4 italic">Your Favorite Artists</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-          {[...Array(10)].map((_, i) => (
+          {!loading && events.slice(0, 10).map(({ tm_event, tm_artist }) => (
             <DashCard
-              key={i}
-              {...placeholderCard}
-              onClick={() => navigate(`/artist/${placeholderCard.artistId}`)}
+              key={tm_artist?.ticketmaster_id || tm_event.ticketmaster_id}
+              image={tm_event.image_url}
+              artist={tm_artist?.name || tm_event.title}
+              liked={false}
+              artistId={tm_artist?.ticketmaster_id}
+              variant="artist"  
+              onClick={() => navigate(`/artist/${tm_artist?.ticketmaster_id}`)}
             />
           ))}
         </div>
