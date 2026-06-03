@@ -3,7 +3,7 @@ export default function EventPageDetails({
   ages = "All Ages",
   ticketUrl = "#",
   forumPosts = [],
-  onForumPostClick = (post) => {},
+  onForumPostClick = () => {},
 }) {
   return (
     <div className="w-full flex flex-col sm:flex-row gap-4">
@@ -66,10 +66,15 @@ export default function EventPageDetails({
               {forumPosts.map((post, index) => (
                 <li key={post.id}>
                   <button
-                    onClick={() => onForumPostClick(post)}
-                    className="w-full text-left text-white text-sm font-text py-3 hover:text-red-orange transition-colors"
+                    onClick={onForumPostClick}
+                    className="w-full text-left py-3 flex flex-col gap-0.5 hover:text-red-orange transition-colors group"
                   >
-                    {post.title}
+                    <span className="text-white text-sm font-text group-hover:text-red-orange transition-colors">
+                      {post.title}
+                    </span>
+                    <span className="text-gray-400 text-xs font-text">
+                      @{post.profiles?.username} · {post.event_title}
+                    </span>
                   </button>
                   {index < forumPosts.length - 1 && (
                     <div className="h-px bg-white/10" />
