@@ -1,17 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { fetchEvent } from "../lib/api"
+import { supabase } from "../lib/supabase"
 import EventInfoCard from "../components/EventInfoCard.jsx"
 import EventPageDetails from "../components/EventPageDetails.jsx"
 
-//formating "2026-06-14" → "June 14, 2026"
 function formatDate(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr + 'T00:00:00')
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
-//formating "19:00:00" → "7:00 PM"
 function formatTime(timeStr) {
   if (!timeStr) return ''
   const [h, m] = timeStr.split(':')
@@ -24,14 +23,30 @@ function EventPage() {
   const { eventId } = useParams()
   const navigate = useNavigate()
   const [eventData, setEventData] = useState(null)
+  const [forumPosts, setForumPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!eventId) return
     setLoading(true)
+
     fetchEvent(eventId)
-      .then(data => setEventData(data))
+      .then(async (data) => {
+        setEventData(data)
+
+        // Search forum posts by artist name
+        const artistName = data.tm_artist?.name || data.tm_event?.title
+        if (artistName) {
+          const { data: postsData } = await supabase
+            .from('forum_posts')
+            .select('id, title, event_title, created_at, profiles(username)')
+            .ilike('event_title', `%${artistName}%`)
+            .order('created_at', { ascending: false })
+            .limit(4)
+          setForumPosts(postsData || [])
+        }
+      })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [eventId])
@@ -65,20 +80,22 @@ function EventPage() {
         artistName={tm_artist?.name || tm_event?.title}
         artistImage={tm_event?.image_url}
         venue={tm_venue?.name}
+        venueId={tm_venue?.ticketmaster_id}
         address={fullAddress}
         date={formatDate(tm_event?.event_date)}
         time={formatTime(tm_event?.event_time)}
         ticketUrl={tm_event?.buy_tickets_url || '#'}
         directionsUrl={directionsUrl}
+         tmEventId={tm_event?.ticketmaster_id} 
         artistPageUrl={tm_artist ? `/artist/${tm_artist.ticketmaster_id}` : '#'}
       />
-        <EventPageDetails
+      <EventPageDetails
         description={tm_event?.description || 'No description available.'}
         ages="All Ages"
         ticketUrl={tm_event?.buy_tickets_url || '#'}
-        forumPosts={[]}
-        onForumPostClick={(post) => navigate(`/forum?post=${post.id}`)}
-        />
+        forumPosts={forumPosts}
+        onForumPostClick={() => navigate('/forum')}
+      />
     </div>
   )
 }

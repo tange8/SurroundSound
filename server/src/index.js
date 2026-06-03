@@ -9,6 +9,9 @@ const TM_BASE = "https://app.ticketmaster.com/discovery/v2";
 const FS_KEY = process.env.FOURSQUARE_API_KEY;
 const FS_BASE = "https://api.foursquare.com/v3";
 
+
+
+
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
@@ -82,13 +85,15 @@ function shapeEvent(e) {
 //   size       number of results (default 20)
 app.get("/api/events", async (req, res) => {
   try {
-    const { city, stateCode, keyword, size = 20 } = req.query;
+    const { city, stateCode, keyword, size = 20, venueId, attractionId } = req.query
 
     const data = await tmFetch("/events.json", {
       city,
       stateCode,
       keyword,
       size,
+      attractionId,
+      venueId,
       classificationName: "music",
       sort: "date,asc",
     });
@@ -157,7 +162,31 @@ app.get("/api/venues/:id", async (req, res) => {
   }
 });
 
+//gets both events and venues matching a keyword for the search suggestions dropdown in the TopBar
+app.get("/api/search", async (req, res) => {
+  try {
+    const { keyword, size = 5 } = req.query
 
+    // Search events and venues in parallel
+    const [eventsData, venuesData] = await Promise.all([
+      tmFetch("/events.json", { keyword, size, classificationName: "music", sort: "date,asc" }),
+      tmFetch("/venues.json", { keyword, size })
+    ])
+
+    const events = eventsData._embedded?.events?.map(shapeEvent) || []
+    const venues = venuesData._embedded?.venues?.map(v => ({
+      ticketmaster_id: v.id,
+      name: v.name,
+      city: v.city?.name || null,
+      state: v.state?.stateCode || null,
+    })) || []
+
+    res.json({ events, venues })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+})
 
 
 app.listen(PORT, () => {

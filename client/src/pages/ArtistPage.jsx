@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { fetchArtist, fetchEvents } from "../lib/api"
+import { supabase } from "../lib/supabase"
 import ArtistInfoCard from "../components/ArtistInfoCard.jsx"
 import ArtistPageDetails from "../components/ArtistPageDetails.jsx"
 
@@ -23,6 +24,7 @@ function ArtistPage() {
   const navigate = useNavigate()
   const [artist, setArtist] = useState(null)
   const [events, setEvents] = useState([])
+  const [forumPosts, setForumPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -30,14 +32,25 @@ function ArtistPage() {
     if (!artistId) return
     setLoading(true)
 
-    // Fetch artist info + their events in parallel
-    Promise.all([
-      fetchArtist(artistId),
-      fetchEvents({ keyword: artistId, size: 10 })
-    ])
-      .then(([artistData, eventsData]) => {
+    // Fetch artist first to get name, then fetch events + posts in parallel
+    fetchArtist(artistId)
+      .then(async (artistData) => {
         setArtist(artistData)
+
+        const [eventsData, { data: postsData }] = await Promise.all([
+          fetchEvents({ attractionId: artistId, size: 10 }),
+          supabase
+            .from('forum_posts')
+            .select('id, title, event_title, created_at, profiles(username)')
+            .ilike('event_title', `%${artistData.name}%`)
+            .order('created_at', { ascending: false })
+            .limit(4)
+        ])
+        console.log('artist name:', artistData.name)
+      console.log('forum posts:', postsData)
+
         setEvents(eventsData.events || [])
+        setForumPosts(postsData || [])
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
@@ -56,14 +69,13 @@ function ArtistPage() {
     </div>
   )
 
-  //shhape events into format for  ArtistPageDetails 
   const upcomingEvents = events.map(({ tm_event, tm_venue }) => ({
     id: tm_event.ticketmaster_id,
     venue: tm_venue?.name || 'TBA',
     city: tm_venue ? `${tm_venue.city}, ${tm_venue.state}` : '',
     date: formatDate(tm_event.event_date),
     time: formatTime(tm_event.event_time),
-    nearby: tm_venue?.state === 'CA', // mark CA events as nearby
+    nearby: tm_venue?.state === 'CA',
   }))
 
   return (
@@ -74,11 +86,13 @@ function ArtistPage() {
         genres={artist?.genre ? [artist.genre] : []}
         monthlyListeners={null}
         artistPageUrl={artist?.website_url || '#'}
+        tmArtistId={artist?.ticketmaster_id}
       />
       <ArtistPageDetails
         description={null}
         genres={artist?.genre ? [artist.genre] : []}
         upcomingEvents={upcomingEvents}
+        forumPosts={forumPosts}
       />
     </div>
   )

@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useArtistFollow } from "../hooks/useArtistFollow";
 
 export default function ArtistInfoCard({
+  tmArtistId = null,
   artistName = "Unknown Artist",
   artistImage = null,
   genres = [],
   monthlyListeners = null,
   artistPageUrl = "#",
 }) {
-  const [following, setFollowing] = useState(false);
+  const navigate = useNavigate();
+  const { following, toggleFollow, isAuthenticated } = useArtistFollow(tmArtistId, artistName, artistImage)
+
+  function handleFollow() {
+    if (!isAuthenticated) {
+      navigate('/login')
+      return
+    }
+    toggleFollow()
+  }
 
   return (
     <div className="relative w-full rounded-lg overflow-hidden">
@@ -70,7 +81,7 @@ export default function ArtistInfoCard({
 
           <div className="flex items-center gap-4 mt-1">
             <button
-              onClick={() => setFollowing(!following)}
+              onClick={handleFollow}
               className="px-6 py-3 rounded-full text-white text-base font-text font-semibold transition-all hover:scale-105 active:scale-95"
               style={{
                 background: following

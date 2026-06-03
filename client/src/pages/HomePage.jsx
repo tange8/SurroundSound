@@ -125,7 +125,7 @@ function HomePage() {
 
       {/* Your Favorite Artists — placeholder until auth favorites are built */}
       <section className="px-8 py-6">
-        <h2 className="text-white font-display text-lg mb-4 italic">Your Favorite Artists</h2>
+        <h2 className="text-white font-display text-lg mb-4 italic">Explore Artists</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
           {!loading && events.slice(0, 10).map(({ tm_event, tm_artist }) => (
             <DashCard

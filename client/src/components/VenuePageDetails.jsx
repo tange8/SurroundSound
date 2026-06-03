@@ -88,7 +88,7 @@ export default function VenuePageDetails({
                         About
                     </h3>
                     <p className="text-gray-300 text-sm leading-relaxed font-text">
-                        {description}
+                    {description || 'No description available for this venue.'}
                     </p>
                 </div>
             </div>
