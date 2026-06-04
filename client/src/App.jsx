@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
 import ArtistPage from './pages/ArtistPage.jsx'
 import VenuePage from './pages/VenuePage.jsx'
+import PostPage from './pages/PostPage'
 
 function App() {
   const location = useLocation()
@@ -41,6 +42,7 @@ function App() {
             <Route path="/venue/:venueId"   element={<VenuePage />} />
             <Route path="/login"            element={<LoginPage />} />
             <Route path="/signup"           element={<SignUpPage />} />
+            <Route path="/forum/:postId" element={<PostPage />} />
 
             {/* Protected routes — must be logged in */}
             <Route path="/create" element={
