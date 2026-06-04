@@ -135,7 +135,7 @@ export default function ArtistPageDetails({
               {forumPosts.map((post, index) => (
                 <li key={post.id}>
                   <button
-                    onClick={() => navigate('/forum')}
+                    onClick={() => navigate(`/forum/${post.id}`)}
                     className="w-full text-left py-3 flex flex-col gap-0.5 hover:text-red-orange transition-colors group"
                   >
                     <span className="text-white text-sm font-text group-hover:text-red-orange transition-colors">

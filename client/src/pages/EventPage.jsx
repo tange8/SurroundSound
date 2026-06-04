@@ -94,7 +94,7 @@ function EventPage() {
         ages="All Ages"
         ticketUrl={tm_event?.buy_tickets_url || '#'}
         forumPosts={forumPosts}
-        onForumPostClick={() => navigate('/forum')}
+        onForumPostClick={(post) => navigate(`/forum/${post.id}`)}
       />
     </div>
   )
