@@ -5,6 +5,7 @@ import { fetchEvent } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import ProfileCard from '../components/ProfileCard'
 import SavedEventCard from '../components/SavedEventCard'
+import FollowedArtistCard from '../components/FollowedArtistCard'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -12,6 +13,7 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState(null)
   const [savedEvents, setSavedEvents] = useState([])
+  const [followedArtists, setFollowedArtists] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -27,6 +29,7 @@ export default function ProfilePage() {
     if (!user) return
     loadProfile()
     loadSavedEvents()
+    loadFollowedArtists()
   }, [user])
 
   async function loadProfile() {
@@ -53,7 +56,6 @@ export default function ProfilePage() {
         .order('created_at', { ascending: false })
     if (!data) return
 
-    // Fetch event details for each saved event in parallel
     const enriched = await Promise.all(
         data.map(async (save) => {
           try {
@@ -74,6 +76,15 @@ export default function ProfilePage() {
         })
     )
     setSavedEvents(enriched)
+  }
+
+  async function loadFollowedArtists() {
+    const { data } = await supabase
+        .from('artist_follows')
+        .select('id, tm_artist_id, artist_name, artist_image')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+    if (data) setFollowedArtists(data)
   }
 
   async function handleSaveProfile() {
@@ -111,6 +122,11 @@ export default function ProfilePage() {
     setSavedEvents(prev => prev.filter(e => e.id !== id))
   }
 
+  async function handleUnfollow(id) {
+    await supabase.from('artist_follows').delete().eq('id', id)
+    setFollowedArtists(prev => prev.filter(a => a.id !== id))
+  }
+
   if (!user) return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <p className="font-body text-sm" style={{ color: '#8890cc' }}>
@@ -146,6 +162,35 @@ export default function ProfilePage() {
             saving={saving} saveError={saveError} setSaveError={setSaveError}
         />
 
+        {/* Following Artists */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-bold text-lg" style={{ color: '#CCD0FF' }}>
+              Following
+              {followedArtists.length > 0 && (
+                  <span className="ml-2 font-body font-normal text-sm" style={{ color: '#6670aa' }}>
+                {followedArtists.length}
+              </span>
+              )}
+            </h2>
+          </div>
+
+          {followedArtists.length === 0 ? (
+              <div className="rounded-2xl px-6 py-8 text-center" style={{ background: '#000013', border: '1px solid #4133FF' }}>
+                <p className="font-body text-sm" style={{ color: '#6670aa' }}>Not following any artists yet.</p>
+              </div>
+          ) : (
+              <div
+                  className="flex gap-6 overflow-x-auto pb-2"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: '#4133FF #000013' }}
+              >
+                {followedArtists.map(artist => (
+                    <FollowedArtistCard key={artist.id} artist={artist} onUnfollow={handleUnfollow} />
+                ))}
+              </div>
+          )}
+        </div>
+
         {/* Saved Events */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -168,7 +213,7 @@ export default function ProfilePage() {
           </div>
 
           {savedEvents.length === 0 ? (
-              <div className="rounded-2xl px-6 py-12 text-center" style={{ background: '#00002C', border: '1px solid #4133FF' }}>
+              <div className="rounded-2xl px-6 py-12 text-center" style={{ background: '#000013', border: '1px solid #4133FF' }}>
                 <p className="text-2xl mb-2">🎵</p>
                 <p className="font-body text-sm mb-4" style={{ color: '#6670aa' }}>No saved events yet.</p>
                 <button
@@ -179,13 +224,17 @@ export default function ProfilePage() {
                 </button>
               </div>
           ) : (
-              <div className="flex flex-col gap-4">
+              <div
+                  className="flex flex-col gap-4 overflow-y-auto pr-1"
+                  style={{ maxHeight: '480px', scrollbarWidth: 'thin', scrollbarColor: '#4133FF #000013' }}
+              >
                 {savedEvents.map(event => (
                     <SavedEventCard key={event.id} event={event} onUnsave={handleUnsave} />
                 ))}
               </div>
           )}
         </div>
+
       </div>
   )
 }
