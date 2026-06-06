@@ -38,7 +38,7 @@ function LoginPage() {
 
         {/* Email */}
         <div className="w-full flex flex-col gap-1">
-          <label className="text-lavendar font-body text-xs px-1">Username</label>
+          <label className="text-lavendar font-body text-xs px-1">Email</label>
           <input
             type="email"
             value={email}
