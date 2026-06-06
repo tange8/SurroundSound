@@ -148,7 +148,7 @@ export default function ExplorePage() {
 
         {/* Grid */}
         {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
               {[...Array(PAGE_SIZE)].map((_, i) => (
                   <div key={i} className="h-64 animate-pulse rounded-2xl" style={{ background: '#00002C' }} />
               ))}
@@ -160,7 +160,7 @@ export default function ExplorePage() {
               <p className="font-display text-lg" style={{ color: '#6670aa' }}>No events found.</p>
             </div>
         ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}>
               {events.map(({ tm_event, tm_artist, tm_venue }) => (
                   <DashCard
                       key={tm_event.ticketmaster_id}
