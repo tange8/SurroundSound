@@ -62,5 +62,5 @@ Open http://localhost:5173 in your browser.
 ## Tech Stack
 
 - **Frontend:** React, Vite, Tailwind CSS
-- **Backend:** Supabase (auth + database)
+- **Backend:** Node.js, Express, Supabase (auth + database)
 - **API:** Ticketmaster Discovery, Last.fm, Stay22
