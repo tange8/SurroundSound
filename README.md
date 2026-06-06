@@ -2,6 +2,8 @@
 
 Team members: Emily Tang and Bryant Dang
 
+Asana: https://app.asana.com/1/955084732624041/project/1214056654644158/list/1214056636586026
+
 ## Note for Graders
 Please set up the .env files in Supabase with the url/key listed below
 
