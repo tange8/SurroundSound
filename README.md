@@ -19,8 +19,9 @@ npm install
 
 .env credentials:
 
-VITE_SUPABASE_URL= 'https://evsdtbjjsphkxyphvkam.supabase.co'
-VITE_SUPABASE_ANON_KEY='yeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2c2R0Ympqc3Boa3h5cGh2a2FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODUwMTAsImV4cCI6MjA5MTk2MTAxMH0.XYh4lwPiBFgr3Cwe0PYvCQ9TOM_q-MLQOawuQO7Eywg'
+VITE_SUPABASE_URL=https://evsdtbjjsphkxyphvkam.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_gkYnHNEg4Zw2E3GOdvZqwA_KAb3KTQR
+VITE_SERVER_URL=http://localhost:3001
 
 ### 3. Server Set Up
 cd server
@@ -28,8 +29,12 @@ npm install
 
 .env credentials:
 
-SUPABASE_URL= 'https://evsdtbjjsphkxyphvkam.supabase.co'
-SUPABASE_SERVICE_ROLE_KEY= 'yeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2c2R0Ympqc3Boa3h5cGh2a2FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODUwMTAsImV4cCI6MjA5MTk2MTAxMH0.XYh4lwPiBFgr3Cwe0PYvCQ9TOM_q-MLQOawuQO7Eywg'
+    SUPABASE_URL=  'https://evsdtbjjsphkxyphvkam.supabase.co'
+    SUPABASE_SERVICE_ROLE_KEY= 'yeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2c2R0Ympqc3Boa3h5cGh2a2FtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODUwMTAsImV4cCI6MjA5MTk2MTAxMH0.XYh4lwPiBFgr3Cwe0PYvCQ9TOM_q-MLQOawuQO7Eywg'
+    PORT=3001
+
+TICKETMASTER_API_KEY=XcfGr08GJuUe5cfNh7G2i0LPuGrQLDRc
+LASTFM_API_KEY=c5b54d6e2102b0203924591ce10a2b76
 PORT=3001
 
 ### 4. Running the program
