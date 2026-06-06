@@ -15,8 +15,8 @@ async function apiFetch(path, params = {}) {
 }
 
 //feetch music events near a city
-export async function fetchEvents({ city, stateCode, keyword, size = 20, venueId, attractionId } = {}) {
-  return apiFetch('/api/events', { city, stateCode, keyword, size, venueId, attractionId })
+export async function fetchEvents({ city, stateCode, keyword, size = 20, venueId, attractionId, radius = 25, page = 0 } = {}) {
+  return apiFetch('/api/events', { city, stateCode, keyword, size, venueId, attractionId, radius, page })
 }
 
 //fetch a single event by Ticketmaster ID
