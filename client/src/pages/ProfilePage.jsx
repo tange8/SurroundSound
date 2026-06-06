@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import ProfileCard from '../components/ProfileCard'
 import SavedEventCard from '../components/SavedEventCard'
 import FollowedArtistCard from '../components/FollowedArtistCard'
+import UserForumPostCard from '../components/UserForumPostCard'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState(null)
   const [savedEvents, setSavedEvents] = useState([])
   const [followedArtists, setFollowedArtists] = useState([])
+  const [forumPosts, setForumPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -30,6 +32,7 @@ export default function ProfilePage() {
     loadProfile()
     loadSavedEvents()
     loadFollowedArtists()
+    loadForumPosts()
   }, [user])
 
   async function loadProfile() {
@@ -120,6 +123,20 @@ export default function ProfilePage() {
   async function handleUnsave(id) {
     await supabase.from('event_saves').delete().eq('id', id)
     setSavedEvents(prev => prev.filter(e => e.id !== id))
+  }
+
+  async function loadForumPosts() {
+    const { data } = await supabase
+        .from('forum_posts')
+        .select('id, title, body, image_url, event_title, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+    if (data) setForumPosts(data)
+  }
+
+  async function handleDeletePost(id) {
+    await supabase.from('forum_posts').delete().eq('id', id)
+    setForumPosts(prev => prev.filter(p => p.id !== id))
   }
 
   async function handleUnfollow(id) {
@@ -230,6 +247,41 @@ export default function ProfilePage() {
               >
                 {savedEvents.map(event => (
                     <SavedEventCard key={event.id} event={event} onUnsave={handleUnsave} />
+                ))}
+              </div>
+          )}
+        </div>
+
+        {/* Forum Posts */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-bold text-lg" style={{ color: '#CCD0FF' }}>
+              My Posts
+              {forumPosts.length > 0 && (
+                  <span className="ml-2 font-body font-normal text-sm" style={{ color: '#6670aa' }}>
+                {forumPosts.length}
+              </span>
+              )}
+            </h2>
+            <button
+                onClick={() => navigate('/create')}
+                className="flex items-center gap-2 px-6 py-3 rounded-full text-white bg-red-orange text-base transition-all hover:brightness-110 hover:scale-105 active:scale-95 shadow-lg font-body"
+            >
+              + New Post
+            </button>
+          </div>
+
+          {forumPosts.length === 0 ? (
+              <div className="rounded-2xl px-6 py-8 text-center" style={{ background: '#000013', border: '1px solid #4133FF' }}>
+                <p className="font-body text-sm" style={{ color: '#6670aa' }}>No posts yet.</p>
+              </div>
+          ) : (
+              <div
+                  className="flex flex-col gap-4 overflow-y-auto pr-1"
+                  style={{ maxHeight: '480px', scrollbarWidth: 'thin', scrollbarColor: '#4133FF #000013' }}
+              >
+                {forumPosts.map(post => (
+                    <UserForumPostCard key={post.id} post={post} onDelete={handleDeletePost} />
                 ))}
               </div>
           )}
