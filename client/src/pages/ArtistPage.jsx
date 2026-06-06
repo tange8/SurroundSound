@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { fetchArtist, fetchEvents } from "../lib/api"
 import { supabase } from "../lib/supabase"
 import ArtistInfoCard from "../components/ArtistInfoCard.jsx"
 import ArtistPageDetails from "../components/ArtistPageDetails.jsx"
+import { fetchArtist, fetchEvents, fetchArtistBio } from "../lib/api"
+
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
@@ -27,15 +28,17 @@ function ArtistPage() {
   const [forumPosts, setForumPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [bio, setBio] = useState(null)
 
   useEffect(() => {
     if (!artistId) return
     setLoading(true)
 
-    // Fetch artist first to get name, then fetch events + posts in parallel
+    //fetch artist first to get name, then fetch events + posts in parallel
     fetchArtist(artistId)
       .then(async (artistData) => {
         setArtist(artistData)
+        fetchArtistBio({ name: artistData.name }).then(d => setBio(d.bio))
 
         const [eventsData, { data: postsData }] = await Promise.all([
           fetchEvents({ attractionId: artistId, size: 10 }),
@@ -89,10 +92,10 @@ function ArtistPage() {
         tmArtistId={artist?.ticketmaster_id}
       />
       <ArtistPageDetails
-        description={null}
-        genres={artist?.genre ? [artist.genre] : []}
-        upcomingEvents={upcomingEvents}
-        forumPosts={forumPosts}
+          description={bio}
+          genres={artist?.genre ? [artist.genre] : []}
+          upcomingEvents={upcomingEvents}
+          forumPosts={forumPosts}
       />
     </div>
   )

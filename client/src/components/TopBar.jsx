@@ -19,7 +19,7 @@ function TopBar() {
   const searchRef = useRef(null)
   const debounceRef = useRef(null)
 
-  // Close on outside click
+  //close on click outside of the search input or suggestions dropdown
   useEffect(() => {
     function handleClick(e) {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -30,7 +30,7 @@ function TopBar() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  // Debounced search
+  //debounced search for events and venues based on user input, updates suggestions dropdown in the TopBar
   useEffect(() => {
     if (!search.trim() || search.length < 2) {
       setSuggestions([])
@@ -100,7 +100,7 @@ function TopBar() {
           />
         </div>
 
-        {/* Suggestions dropdown */}
+        {/* drowdown with suggestions based on user inpout*/}
         {showSuggestions && (
           <div
             className="absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-hidden shadow-2xl z-50"
@@ -115,7 +115,7 @@ function TopBar() {
               <div className="px-4 py-3 text-white/40 text-sm font-body">No results found</div>
             ) : (
               <>
-                {/* Events */}
+                {/*events */}
                 {suggestions.length > 0 && (
                   <>
                     <div className="px-4 py-1 pt-2 text-white/40 text-xs font-body">EVENTS</div>
@@ -166,16 +166,21 @@ function TopBar() {
                             }}
                             className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-white/10 transition-colors"
                           >
-                            <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                              <span className="text-lg">📍</span>
+                            {/* replace the emoji placeholder with this */}
+                            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-white/10">
+                              {venue.image_url ? (
+                                <img
+                                  src={venue.image_url}
+                                  alt={venue.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-lg">📍</div>
+                              )}
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <span className="text-white text-sm font-display truncate">
-                                {venue.name}
-                              </span>
-                              <span className="text-white/40 text-xs font-body truncate">
-                                {venue.city}, {venue.state}
-                              </span>
+                              <span className="text-white text-sm font-display truncate">{venue.name}</span>
+                              <span className="text-white/40 text-xs font-body truncate">{venue.city}, {venue.state}</span>
                             </div>
                           </button>
                         </li>

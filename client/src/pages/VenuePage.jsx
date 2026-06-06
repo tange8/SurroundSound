@@ -79,7 +79,7 @@ function VenuePage() {
     <div className="flex flex-col mt-10 gap-10 max-w-4xl mx-auto">
       <VenueInfoCard
         venueName={venue?.name}
-        venueImage={null}
+        venueImage={venue?.image_url}
         address={fullAddress}
         website={venue?.website_url || null}
         phone={null}
@@ -87,7 +87,12 @@ function VenuePage() {
         directionsUrl={directionsUrl}
       />
       <VenuePageDetails
-        description={null}
+        description={venue?.general_info}
+        childRule={venue?.child_rule}
+        parkingDetail={venue?.parking_detail}
+        boxOfficePhone={venue?.box_office_phone}
+        boxOfficeHours={venue?.box_office_hours}
+        boxOfficePayment={venue?.box_office_payment}
         upcomingEvents={upcomingEvents}
       />
     </div>

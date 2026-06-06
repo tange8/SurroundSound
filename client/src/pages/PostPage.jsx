@@ -62,7 +62,7 @@ function PostPage() {
     } else {
       await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id })
     }
-    // Refresh post to update like count
+    // refreshing
     const { data } = await supabase
       .from('forum_posts')
       .select(`id, title, body, image_url, event_title, created_at, profiles(id, username, avatar_url), post_likes(user_id)`)
