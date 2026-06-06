@@ -54,7 +54,6 @@ Open http://localhost:5173 in your browser.
 | `/signup` | Sign Up | New user registration screen | 
 
 
-NOTES: We hardcoded events, venues, and artists. You can navigate from the homepage and all our test routes are routed on there. Otherwise, please use id = 1 for any event, artist, or venue routes. And for auth pages, please click on the top right button that says Login/Signup.
 
 ---
 
