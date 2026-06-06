@@ -59,21 +59,24 @@ function shapeEvent(e) {
         }
       : null,
     tm_venue: venue
-      ? {
-          ticketmaster_id: venue.id,
-          name: venue.name,
-          address: venue.address?.line1 || null,
-          city: venue.city?.name || null,
-          state: venue.state?.stateCode || null,
-          zip: venue.postalCode || null,
-          latitude: venue.location?.latitude
-            ? parseFloat(venue.location.latitude)
-            : null,
-          longitude: venue.location?.longitude
-            ? parseFloat(venue.location.longitude)
-            : null,
-        }
-      : null,
+  ? {
+      ticketmaster_id: venue.id,
+      name: venue.name,
+      address: venue.address?.line1 || null,
+      city: venue.city?.name || null,
+      state: venue.state?.stateCode || null,
+      zip: venue.postalCode || null,
+      latitude: venue.location?.latitude ? parseFloat(venue.location.latitude) : null,
+      longitude: venue.location?.longitude ? parseFloat(venue.location.longitude) : null,
+      image_url: venue.images?.[1]?.url || venue.images?.[0]?.url || null,
+      general_info: venue.generalInfo?.generalRule || null,
+      child_rule: venue.generalInfo?.childRule || null,
+      parking_detail: venue.parkingDetail || null,
+      box_office_phone: venue.boxOfficeInfo?.phoneNumberDetail || null,
+      box_office_hours: venue.boxOfficeInfo?.openHoursDetail || null,
+      box_office_payment: venue.boxOfficeInfo?.acceptedPaymentDetail || null,
+    }
+  : null
   };
 }
 
@@ -141,7 +144,7 @@ app.get("/api/artists/:id", async (req, res) => {
 // GET /api/venues/:id 
 app.get("/api/venues/:id", async (req, res) => {
   try {
-    const data = await tmFetch(`/venues/${req.params.id}.json`);
+    const data = await tmFetch(`/venues/${req.params.id}.json`)
     res.json({
       ticketmaster_id: data.id,
       name: data.name,
@@ -149,18 +152,22 @@ app.get("/api/venues/:id", async (req, res) => {
       city: data.city?.name || null,
       state: data.state?.stateCode || null,
       zip: data.postalCode || null,
-      latitude: data.location?.latitude
-        ? parseFloat(data.location.latitude)
-        : null,
-      longitude: data.location?.longitude
-        ? parseFloat(data.location.longitude)
-        : null,
-    });
+      latitude: data.location?.latitude ? parseFloat(data.location.latitude) : null,
+      longitude: data.location?.longitude ? parseFloat(data.location.longitude) : null,
+      image_url: data.images?.[1]?.url || data.images?.[0]?.url || null,
+      website_url: data.url || null,
+      general_info: data.generalInfo?.generalRule || null,
+      child_rule: data.generalInfo?.childRule || null,
+      parking_detail: data.parkingDetail || null,
+      box_office_phone: data.boxOfficeInfo?.phoneNumberDetail || null,
+      box_office_hours: data.boxOfficeInfo?.openHoursDetail || null,
+      box_office_payment: data.boxOfficeInfo?.acceptedPaymentDetail || null,
+    })
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error(err)
+    res.status(500).json({ error: err.message })
   }
-});
+})
 
 //gets both events and venues matching a keyword for the search suggestions dropdown in the TopBar
 app.get("/api/search", async (req, res) => {
@@ -179,6 +186,7 @@ app.get("/api/search", async (req, res) => {
       name: v.name,
       city: v.city?.name || null,
       state: v.state?.stateCode || null,
+      image_url: v.images?.[1]?.url || v.images?.[0]?.url || null, 
     })) || []
 
     res.json({ events, venues })
@@ -188,6 +196,26 @@ app.get("/api/search", async (req, res) => {
   }
 })
 
+//this endpoint uses last fm to call artist bios
+app.get("/api/artist-bio", async (req, res) => {
+  try {
+    const { name } = req.query
+    if (!name) return res.json({ bio: null })
+
+    const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(name)}&api_key=${process.env.LASTFM_API_KEY}&format=json`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    const bio = data.artist?.bio?.summary
+      ?.replace(/<a[^>]*>.*?<\/a>/gi, '')  //stripping
+      ?.replace(/\s+/g, ' ')
+      ?.trim() || null
+
+    res.json({ bio })
+  } catch (err) {
+    res.json({ bio: null })
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

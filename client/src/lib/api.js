@@ -83,3 +83,7 @@ export async function isEventSaved(eventId, userId) {
 
   return !!data;
 }
+
+export async function fetchArtistBio({ name }) {
+  return apiFetch('/api/artist-bio', { name })
+}

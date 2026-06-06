@@ -9,7 +9,7 @@ export default function VenueInfoCard({
 }) {
     return (
         <div className="relative w-full rounded-lg overflow-hidden">
-            {/* Background gradient */}
+            {/* background*/}
             <div
                 className="absolute inset-0"
                 style={{
@@ -18,10 +18,10 @@ export default function VenueInfoCard({
                 }}
             />
 
-            {/* Card content */}
+            {/* card*/}
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-6 p-6 md:p-8 md:pr-6">
 
-                {/* Venue image */}
+                {/* venue image */}
                 <div
                     className="w-full aspect-square md:w-[240px] md:flex-shrink-0 md:order-last rounded-xl overflow-hidden bg-gray-800"
                     style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
@@ -52,7 +52,7 @@ export default function VenueInfoCard({
                     )}
                 </div>
 
-                {/* Venue info */}
+                {/* venue info */}
                 <div className="flex flex-col gap-4 md:gap-5 flex-1 min-w-0 w-full">
                     <div>
                         <h2 className="text-white text-3xl md:text-5xl font-display font-semibold leading-tight tracking-tight">
@@ -110,7 +110,7 @@ export default function VenueInfoCard({
                             </div>
                         )}
 
-                        {/* Website */}
+                        {/* website links */}
                         {website && (
                             <div className="flex items-center gap-3">
                                 <svg
@@ -139,7 +139,7 @@ export default function VenueInfoCard({
                             </div>
                         )}
 
-                        {/* Phone */}
+                        {/* phone */}
                         {phone && (
                             <div className="flex items-center gap-3">
                                 <svg

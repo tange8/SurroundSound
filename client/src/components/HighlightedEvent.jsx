@@ -13,7 +13,7 @@ function HighlightedEvent({ image, artist, eventId }) {
         className="w-full h-full object-cover object-[center_20%]"
       />
 
-      {/* Dark gradient overlay so text is readable */}
+      {/*dark gradent*/}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
       {/* Text + Button */}
