@@ -63,3 +63,4 @@ Open http://localhost:5173 in your browser.
 
 - **Frontend:** React, Vite, Tailwind CSS
 - **Backend:** Supabase (auth + database)
+- **API:** Ticketmaster Discovery, Last.fm, Stay22
