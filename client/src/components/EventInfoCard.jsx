@@ -36,7 +36,7 @@ export default function EventInfoCard({
 
       <div className="relative flex flex-col md:flex-row items-center justify-between gap-6 p-6 md:p-8 md:pr-6">
 
-        {/* Artist image */}
+        {/*artis timages*/}
         <div
           className="w-full aspect-square md:w-[240px] md:flex-shrink-0 md:order-last rounded-xl overflow-hidden"
           style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
@@ -55,7 +55,7 @@ export default function EventInfoCard({
         {/* Left: Info */}
         <div className="flex flex-col gap-4 md:gap-5 flex-1 min-w-0 w-full">
 
-          {/* Artist name */}
+          {/*name*/}
           <div>
             <h2 className="text-white text-3xl md:text-5xl font-display font-semibold leading-tight tracking-tight">
               {artistName}
@@ -105,7 +105,7 @@ export default function EventInfoCard({
             </div>
           </div>
 
-          {/* Actions */}
+          {/* actions */}
           <div className="flex items-center gap-4 mt-1">
             <button
               onClick={handleLike}

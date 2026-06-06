@@ -13,7 +13,7 @@ function VenueCard({ image, name, location, onClick }) {
         <img
           src={image}
           alt={name}
-          className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-52 object-cover object-center group-hover:scale-105 transition-transform duration-300"
         />
       </div>
       <div className="text-center">

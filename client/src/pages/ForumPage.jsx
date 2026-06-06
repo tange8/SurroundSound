@@ -16,7 +16,7 @@ function ForumPage() {
   async function fetchPosts() {
     setLoading(true)
     try {
-      // Fetch posts with author profile info
+      //fetch posts with author profile info
       const { data, error } = await supabase
         .from('forum_posts')
         .select(`
@@ -66,7 +66,7 @@ function ForumPage() {
       await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id })
     }
 
-    // Refresh posts to update like count
+    //refreshing page
     fetchPosts()
   }
 

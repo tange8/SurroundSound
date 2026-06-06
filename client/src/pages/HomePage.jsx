@@ -59,7 +59,7 @@ function HomePage() {
   return (
     <div className="min-h-screen">
 
-      {/* Featured / Highlighted Event */}
+      {/*featured event*/}
       {featuredEvent ? (
         <HighlightedEvent
           image={featuredEvent.tm_event.image_url}
@@ -70,7 +70,7 @@ function HomePage() {
         <div className="h-64 bg-white/5 animate-pulse rounded-xl mx-8 mt-4" />
       )}
 
-      {/* Trending Now */}
+      {/*trending Now */}
       <section className="px-8 py-6">
         <h2 className="text-white font-display text-lg mb-4 italic">Trending Now</h2>
 
@@ -104,14 +104,14 @@ function HomePage() {
         )}
       </section>
 
-      {/* Venues Near You */}
+      {/*venues Near You */}
       <section className="px-4 md:px-8 py-6">
         <h2 className="text-white font-display text-lg mb-4 italic">Venues Near You</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
           {uniqueVenues.map(({ tm_event, tm_venue }) => (
             <VenueCard
             key={tm_venue.ticketmaster_id}
-            image={tm_event.image_url}
+            image={tm_venue.image_url || tm_event.image_url}
             name={tm_venue.name}
             location={`${tm_venue.city}, ${tm_venue.state}`}
             city={tm_venue.city}    // ← added
@@ -123,7 +123,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Your Favorite Artists — placeholder until auth favorites are built */}
+      {/*fav authors */}
       <section className="px-8 py-6">
         <h2 className="text-white font-display text-lg mb-4 italic">Explore Artists</h2>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">

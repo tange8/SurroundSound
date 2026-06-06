@@ -29,13 +29,12 @@ function DashCard({ image, date, time, artist, venue, onClick, variant = 'event'
         backgroundClip: 'padding-box, border-box'
       }}
     >
-      {/* Blue corner glow */}
       <div
         className="absolute bottom-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-200 z-10"
         style={{ background: 'radial-gradient(ellipse at bottom right, #4133FF, transparent)' }}
       />
 
-      {/* TOP: Image section */}
+      {/*tp header imagfe */}
       <div className="relative h-48 overflow-hidden">
         <img
           src={image}
@@ -43,7 +42,7 @@ function DashCard({ image, date, time, artist, venue, onClick, variant = 'event'
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* Heart — only show on event cards */}
+        {/*hearts */}
         {variant === 'event' && (
           <button
             onClick={handleLike}
@@ -54,7 +53,7 @@ function DashCard({ image, date, time, artist, venue, onClick, variant = 'event'
         )}
       </div>
 
-      {/* BOTTOM: Info section */}
+      {/*bttom section: Info section */}
       <div className="flex flex-col gap-1 px-3 py-3">
         {variant === 'event' && (
           <>

@@ -23,7 +23,7 @@ function CreatePage() {
   const debounceRef = useRef(null)
   const eventRef = useRef(null)
 
-  // Close suggestions on outside click
+  //close suggestions on outside click
   useEffect(() => {
     function handleClick(e) {
       if (eventRef.current && !eventRef.current.contains(e.target)) {
