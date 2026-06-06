@@ -9,9 +9,6 @@ const TM_BASE = "https://app.ticketmaster.com/discovery/v2";
 const FS_KEY = process.env.FOURSQUARE_API_KEY;
 const FS_BASE = "https://api.foursquare.com/v3";
 
-
-
-
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
@@ -19,7 +16,6 @@ app.get("/", (req, res) => {
   res.json({ message: "SurroundSound server is running 🎵" });
 });
 
-//helper to fetch from Ticketmaster API
 async function tmFetch(endpoint, params = {}) {
   const url = new URL(`${TM_BASE}${endpoint}`);
   url.searchParams.set("apikey", TM_KEY);
@@ -31,14 +27,13 @@ async function tmFetch(endpoint, params = {}) {
   return res.json();
 }
 
-// heelper to shape Ticketmaster event data into a consistent format for the frontend
 function shapeEvent(e) {
   const venue = e._embedded?.venues?.[0];
   const artist = e._embedded?.attractions?.[0];
   const image =
-    e.images?.find((i) => i.ratio === "16_9" && i.width > 1000)?.url ||
-    e.images?.[0]?.url ||
-    null;
+      e.images?.find((i) => i.ratio === "16_9" && i.width > 1000)?.url ||
+      e.images?.[0]?.url ||
+      null;
 
   return {
     tm_event: {
@@ -51,44 +46,39 @@ function shapeEvent(e) {
       description: e.info || e.pleaseNote || null,
     },
     tm_artist: artist
-      ? {
+        ? {
           ticketmaster_id: artist.id,
           name: artist.name,
           image_url: artist.images?.[0]?.url || null,
           genre: artist.classifications?.[0]?.genre?.name || null,
         }
-      : null,
+        : null,
     tm_venue: venue
-  ? {
-      ticketmaster_id: venue.id,
-      name: venue.name,
-      address: venue.address?.line1 || null,
-      city: venue.city?.name || null,
-      state: venue.state?.stateCode || null,
-      zip: venue.postalCode || null,
-      latitude: venue.location?.latitude ? parseFloat(venue.location.latitude) : null,
-      longitude: venue.location?.longitude ? parseFloat(venue.location.longitude) : null,
-      image_url: venue.images?.[1]?.url || venue.images?.[0]?.url || null,
-      general_info: venue.generalInfo?.generalRule || null,
-      child_rule: venue.generalInfo?.childRule || null,
-      parking_detail: venue.parkingDetail || null,
-      box_office_phone: venue.boxOfficeInfo?.phoneNumberDetail || null,
-      box_office_hours: venue.boxOfficeInfo?.openHoursDetail || null,
-      box_office_payment: venue.boxOfficeInfo?.acceptedPaymentDetail || null,
-    }
-  : null
+        ? {
+          ticketmaster_id: venue.id,
+          name: venue.name,
+          address: venue.address?.line1 || null,
+          city: venue.city?.name || null,
+          state: venue.state?.stateCode || null,
+          zip: venue.postalCode || null,
+          latitude: venue.location?.latitude ? parseFloat(venue.location.latitude) : null,
+          longitude: venue.location?.longitude ? parseFloat(venue.location.longitude) : null,
+          image_url: venue.images?.[1]?.url || venue.images?.[0]?.url || null,
+          general_info: venue.generalInfo?.generalRule || null,
+          child_rule: venue.generalInfo?.childRule || null,
+          parking_detail: venue.parkingDetail || null,
+          box_office_phone: venue.boxOfficeInfo?.phoneNumberDetail || null,
+          box_office_hours: venue.boxOfficeInfo?.openHoursDetail || null,
+          box_office_payment: venue.boxOfficeInfo?.acceptedPaymentDetail || null,
+        }
+        : null,
   };
 }
 
-// GET /api/events
-// Query params:
-//   city       e.g. "Los Angeles"
-//   stateCode  e.g. "CA"
-//   keyword    e.g. "Taylor Swift"
-//   size       number of results (default 20)
+// GET /api/events — now supports page and radius
 app.get("/api/events", async (req, res) => {
   try {
-    const { city, stateCode, keyword, size = 20, venueId, attractionId } = req.query
+    const { city, stateCode, keyword, size = 20, venueId, attractionId, radius = 25, page = 0 } = req.query
 
     const data = await tmFetch("/events.json", {
       city,
@@ -97,6 +87,8 @@ app.get("/api/events", async (req, res) => {
       size,
       attractionId,
       venueId,
+      radius,
+      page,
       classificationName: "music",
       sort: "date,asc",
     });
@@ -104,15 +96,18 @@ app.get("/api/events", async (req, res) => {
     const events = data._embedded?.events || [];
     const shaped = events.map(shapeEvent);
 
-    res.json({ events: shaped, total: data.page?.totalElements || 0 });
+    res.json({
+      events: shaped,
+      total: data.page?.totalElements || 0,
+      totalPages: data.page?.totalPages || 1,
+      currentPage: data.page?.number || 0,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// GET /api/events/:id 
-//one single event by Ticketmaster event ID
 app.get("/api/events/:id", async (req, res) => {
   try {
     const data = await tmFetch(`/events/${req.params.id}.json`);
@@ -123,8 +118,6 @@ app.get("/api/events/:id", async (req, res) => {
   }
 });
 
-// GET /api/artists/:id 
-//single artist/attraction by Ticketmaster attraction ID
 app.get("/api/artists/:id", async (req, res) => {
   try {
     const data = await tmFetch(`/attractions/${req.params.id}.json`);
@@ -141,7 +134,6 @@ app.get("/api/artists/:id", async (req, res) => {
   }
 });
 
-// GET /api/venues/:id 
 app.get("/api/venues/:id", async (req, res) => {
   try {
     const data = await tmFetch(`/venues/${req.params.id}.json`)
@@ -169,26 +161,21 @@ app.get("/api/venues/:id", async (req, res) => {
   }
 })
 
-//gets both events and venues matching a keyword for the search suggestions dropdown in the TopBar
 app.get("/api/search", async (req, res) => {
   try {
     const { keyword, size = 5 } = req.query
-
-    // Search events and venues in parallel
     const [eventsData, venuesData] = await Promise.all([
       tmFetch("/events.json", { keyword, size, classificationName: "music", sort: "date,asc" }),
       tmFetch("/venues.json", { keyword, size })
     ])
-
     const events = eventsData._embedded?.events?.map(shapeEvent) || []
     const venues = venuesData._embedded?.venues?.map(v => ({
       ticketmaster_id: v.id,
       name: v.name,
       city: v.city?.name || null,
       state: v.state?.stateCode || null,
-      image_url: v.images?.[1]?.url || v.images?.[0]?.url || null, 
+      image_url: v.images?.[1]?.url || v.images?.[0]?.url || null,
     })) || []
-
     res.json({ events, venues })
   } catch (err) {
     console.error(err)
@@ -196,21 +183,17 @@ app.get("/api/search", async (req, res) => {
   }
 })
 
-//this endpoint uses last fm to call artist bios
 app.get("/api/artist-bio", async (req, res) => {
   try {
     const { name } = req.query
     if (!name) return res.json({ bio: null })
-
     const url = `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${encodeURIComponent(name)}&api_key=${process.env.LASTFM_API_KEY}&format=json`
     const response = await fetch(url)
     const data = await response.json()
-
     const bio = data.artist?.bio?.summary
-      ?.replace(/<a[^>]*>.*?<\/a>/gi, '')  //stripping
-      ?.replace(/\s+/g, ' ')
-      ?.trim() || null
-
+        ?.replace(/<a[^>]*>.*?<\/a>/gi, '')
+        ?.replace(/\s+/g, ' ')
+        ?.trim() || null
     res.json({ bio })
   } catch (err) {
     res.json({ bio: null })
